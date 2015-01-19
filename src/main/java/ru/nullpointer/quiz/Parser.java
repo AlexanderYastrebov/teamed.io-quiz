@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 
 /**
  * Please review the class below and suggest improvements. How would you
@@ -19,42 +19,51 @@ import java.io.OutputStream;
  */
 public class Parser {
 
-    private File file;
+    private final File file;
+    private final String encoding;
 
-    public synchronized void setFile(File f) {
-        file = f;
+    public Parser(File file, String encoding) {
+        this.file = file;
+        this.encoding = encoding;
     }
 
-    public synchronized File getFile() {
+    public File getFile() {
         return file;
     }
 
+    public String getEncoding() {
+        return encoding;
+    }
+
     public String getContent() throws IOException {
-        InputStream i = new FileInputStream(file);
-        String output = "";
-        int data;
-        while ((data = i.read()) > 0) {
-            output += (char) data;
+        StringBuilder sb;
+        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file), encoding)) {
+            sb = new StringBuilder();
+            int c;
+            while ((c = reader.read()) != -1) {
+                sb.append((char) c);
+            }
         }
-        return output;
+        return sb.toString();
     }
 
     public String getContentWithoutUnicode() throws IOException {
-        InputStream i = new FileInputStream(file);
-        String output = "";
-        int data;
-        while ((data = i.read()) > 0) {
-            if (data < 0x80) {
-                output += (char) data;
+        StringBuilder sb;
+        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file), encoding)) {
+            sb = new StringBuilder();
+            int c;
+            while ((c = reader.read()) != -1) {
+                if (c < 0x80) {
+                    sb.append((char) c);
+                }
             }
         }
-        return output;
+        return sb.toString();
     }
 
     public void saveContent(String content) throws IOException {
-        OutputStream o = new FileOutputStream(file);
-        for (int i = 0; i < content.length(); i += 1) {
-            o.write(content.charAt(i));
+        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file), encoding)) {
+            writer.write(content);
         }
     }
 }

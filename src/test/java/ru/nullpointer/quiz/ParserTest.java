@@ -18,24 +18,21 @@ public class ParserTest {
 
     @Test
     public void testGetContent() throws IOException {
-        Parser p = new Parser();
-        p.setFile(new File("src/test/resources/hello.txt"));
+        Parser p = new Parser(new File("src/test/resources/hello.txt"), "UTF-8");
 
         assertEquals("Hello world!", p.getContent());
     }
 
     @Test
     public void testGetContentWithoutUnicode() throws IOException {
-        Parser p = new Parser();
-        p.setFile(new File("src/test/resources/hello_unicode.txt"));
+        Parser p = new Parser(new File("src/test/resources/hello_unicode.txt"), "UTF-8");
 
         assertEquals(" world!", p.getContentWithoutUnicode());
     }
 
     @Test
     public void testSaveContent() throws IOException {
-        Parser p = new Parser();
-        p.setFile(temp.newFile());
+        Parser p = new Parser(temp.newFile(), "UTF-8");
 
         p.saveContent("Bye world!");
 
@@ -44,8 +41,7 @@ public class ParserTest {
 
     @Test
     public void testSaveContentUnicode() throws IOException {
-        Parser p = new Parser();
-        p.setFile(temp.newFile());
+        Parser p = new Parser(temp.newFile(), "UTF-8");
 
         p.saveContent("Пока world!");
 
