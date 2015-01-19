@@ -8,14 +8,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
 /**
- * Please review the class below and suggest improvements. How would you
- * refactor this class if it would be in a real-life project? There are many
- * problems here, both high-level design mistakes, and low-level implementation
- * bugs. We're interested to see high-level problems first, since they are most
- * critical. The more mistakes you can spot, the better programmer you are.
- */
-/**
- * This class is thread safe.
+ * Read and writes content to/from file. This class is thread safe.
+ *
+ * @todo Support more general data source by using java.io.Reader or a set of
+ * constructors
+ * @todo Separate storing and reading data into different classes
+ * @todo There should be a saveContentWithoutUnicode pair method
  */
 public class Parser {
 
