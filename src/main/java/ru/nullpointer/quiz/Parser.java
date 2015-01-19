@@ -36,29 +36,11 @@ public class Parser {
     }
 
     public String getContent() throws IOException {
-        StringBuilder sb;
-        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file), encoding)) {
-            sb = new StringBuilder();
-            int c;
-            while ((c = reader.read()) != -1) {
-                sb.append((char) c);
-            }
-        }
-        return sb.toString();
+        return read(ANY_FILTER);
     }
 
     public String getContentWithoutUnicode() throws IOException {
-        StringBuilder sb;
-        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file), encoding)) {
-            sb = new StringBuilder();
-            int c;
-            while ((c = reader.read()) != -1) {
-                if (c < 0x80) {
-                    sb.append((char) c);
-                }
-            }
-        }
-        return sb.toString();
+        return read(UNICODE_FILTER);
     }
 
     public void saveContent(String content) throws IOException {
@@ -66,4 +48,40 @@ public class Parser {
             writer.write(content);
         }
     }
+
+    private String read(CharFilter filter) throws IOException {
+        StringBuilder sb;
+        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file), encoding)) {
+            sb = new StringBuilder((int) file.length());
+            int c;
+            while ((c = reader.read()) != -1) {
+                if (filter.apply(c)) {
+                    sb.append((char) c);
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    private interface CharFilter {
+
+        boolean apply(int ch);
+    }
+    //
+    private static final CharFilter ANY_FILTER = new CharFilter() {
+
+        @Override
+        public boolean apply(int ch) {
+            return true;
+        }
+    };
+    //
+    private static final CharFilter UNICODE_FILTER = new CharFilter() {
+
+        @Override
+        public boolean apply(int ch) {
+            return (ch < 0x80);
+        }
+
+    };
 }
